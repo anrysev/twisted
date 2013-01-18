@@ -115,7 +115,8 @@ class UnixAppLogger(app.AppLogger):
         self._syslog = options.get("syslog", False)
         self._syslogPrefix = options.get("prefix", "")
         self._nodaemon = options.get("nodaemon", False)
-
+        self._uid = options.get("uid", None)
+        self._gid = options.get("gid", None)
 
     def _getLogObserver(self):
         """
@@ -143,7 +144,9 @@ class UnixAppLogger(app.AppLogger):
             logFile = logfile.LogFile.fromFullPath(self._logfilename,
                     rotateLength=self._logrotatelength,
                     defaultMode=self._logfilemode,
-                    maxRotatedFiles=self._logmaxfiles)
+                    maxRotatedFiles=self._logmaxfiles,
+                    uid=self._uid,
+                    gid=self._gid)
             try:
                 import signal
             except ImportError:

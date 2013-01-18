@@ -21,7 +21,7 @@ class BaseLogFile:
 
     synchronized = ["write", "rotate"]
 
-    def __init__(self, name, directory, defaultMode=None):
+    def __init__(self, name, directory, defaultMode=None, uid=None, gid=None):
         """
         Create a log file.
 
@@ -32,6 +32,8 @@ class BaseLogFile:
         """
         self.directory = directory
         self.name = name
+        self.uid = uid
+        self.gid = gid
         self.path = os.path.join(directory, name)
         if defaultMode is None and os.path.exists(self.path):
             self.defaultMode = stat.S_IMODE(os.stat(self.path)[stat.ST_MODE])
@@ -78,6 +80,12 @@ class BaseLogFile:
                 os.chmod(self.path, self.defaultMode)
             except OSError:
                 # Probably /dev/null or something?
+                pass
+
+        if self.uid and self.gid:
+            try:
+                os.chown(self.path, self.uid, self.gid)
+            except OSError:
                 pass
 
     def __getstate__(self):
@@ -141,7 +149,7 @@ class LogFile(BaseLogFile):
     A rotateLength of None disables automatic log rotation.
     """
     def __init__(self, name, directory, rotateLength=1000000, defaultMode=None,
-                 maxRotatedFiles=None):
+                 maxRotatedFiles=None, uid=None, gid=None):
         """
         Create a log file rotating on length.
 
@@ -158,7 +166,7 @@ class LogFile(BaseLogFile):
             creates. Warning: it removes all log files above this number.
         @type maxRotatedFiles: C{int}
         """
-        BaseLogFile.__init__(self, name, directory, defaultMode)
+        BaseLogFile.__init__(self, name, directory, defaultMode, uid, gid)
         self.rotateLength = rotateLength
         self.maxRotatedFiles = maxRotatedFiles
 
