@@ -108,6 +108,12 @@ class UnixAppLogger(app.AppLogger):
 
     @ivar _nodaemon: A flag indicating the process will not be daemonizing.
     @type _nodaemon: C{bool}
+
+    @ivar _uid: UID for changing of log-file owner.
+    @type _uid: C{int}
+
+    @ivar _uid: GID for changing of log-file owner.
+    @type _uid: C{int}
     """
 
     def __init__(self, options):

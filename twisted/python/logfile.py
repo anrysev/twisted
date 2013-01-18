@@ -28,6 +28,8 @@ class BaseLogFile:
         @param name: name of the file
         @param directory: directory holding the file
         @param defaultMode: permissions used to create the file. Default to
+        @param uid: UID of file owner
+        @param gid: GID of file owner
         current permissions of the file if the file exists.
         """
         self.directory = directory
@@ -82,7 +84,7 @@ class BaseLogFile:
                 # Probably /dev/null or something?
                 pass
 
-        if self.uid and self.gid:
+        if self.uid is not None and self.gid is not None:
             try:
                 os.chown(self.path, self.uid, self.gid)
             except OSError:
@@ -165,6 +167,10 @@ class LogFile(BaseLogFile):
         @param maxRotatedFiles: if not None, max number of log files the class
             creates. Warning: it removes all log files above this number.
         @type maxRotatedFiles: C{int}
+        @param uid: if not None, change UID of owner for the log-file
+        @type uid: C{int}
+        @param gid: if not None, change GID of owner for the log-file
+        @type gid: C{int}
         """
         BaseLogFile.__init__(self, name, directory, defaultMode, uid, gid)
         self.rotateLength = rotateLength
